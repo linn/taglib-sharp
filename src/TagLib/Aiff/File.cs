@@ -23,7 +23,9 @@
 //
 
 using System;
+using System.Collections.Generic;
 using TagLib.Id3v2;
+using System.Linq;
 
 namespace TagLib.Aiff
 {
@@ -408,11 +410,13 @@ namespace TagLib.Aiff
 			tag_start = -1;
 			tag_end = -1;
 
+            AiffDataChunks chunks = new AiffDataChunks(this);
+
 			// Get the properties of the file
 			if (header_block == null &&
 			    style != ReadStyle.None)
 			{
-				long common_chunk_pos = Find(CommIdentifier, 0);
+                long common_chunk_pos = chunks.Find(CommIdentifier, 0);
 
 				if (common_chunk_pos == -1)
 				{
@@ -433,16 +437,17 @@ namespace TagLib.Aiff
 			// the sound data chunk.
 			// So we search first for the Sound data chunk and see, if an ID3 chunk appears before
 			long id3_chunk_pos = -1;
-			long sound_chunk_pos = Find(SoundIdentifier, 0, ID3Identifier);
+            long sound_chunk_pos = chunks.Find(SoundIdentifier, 0, ID3Identifier);
 			if (sound_chunk_pos == -1)
 			{
 				// The ID3 chunk appears before the Sound chunk
-				id3_chunk_pos = Find(ID3Identifier, 0);
-			}
+                id3_chunk_pos = chunks.Find(ID3Identifier, 0);
+            }
+
 
 			// Now let's look for the Sound chunk again
 			// Since a previous return value of -1 does mean, that the ID3 chunk was found first
-			sound_chunk_pos = Find(SoundIdentifier, 0);
+            sound_chunk_pos = chunks.Find(SoundIdentifier, 0);
 			if (sound_chunk_pos == -1)
 			{
 				throw new CorruptFileException(
@@ -456,7 +461,7 @@ namespace TagLib.Aiff
 
 			if (id3_chunk_pos == -1)
 			{
-				id3_chunk_pos = Find(ID3Identifier, start_search_pos);
+                id3_chunk_pos = chunks.Find(ID3Identifier, start_search_pos);
 			}
 
 			if (id3_chunk_pos > -1)
