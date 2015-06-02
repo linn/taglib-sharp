@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>taglib-sharp</id>
+    <version>$version$</version>
+    <title>taglib-sharp</title>
+    <authors>Linn</authors>
+    <owners>Linn</owners>
+    <description>A fork of taglib-sharp packaged for Linn</description>
+    <releaseNotes></releaseNotes>
+    <copyright></copyright>
+  </metadata>
+    <files>
+        <file src="build\taglib-sharp\Release\bin\taglib-sharp.dll" target="lib\net40" />
+    </files>
+</package>
