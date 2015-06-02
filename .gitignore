@@ -11,7 +11,6 @@ configure
 *.exe
 *.mdb
 *.pidb
-*.config
 install-sh
 missing
 *.pc
@@ -29,3 +28,8 @@ tests/*.dll
 tests/*.xml
 test-results
 .*.swp
+src/obj/
+packages/
+*.suo
+*.dll
+*.pdb
