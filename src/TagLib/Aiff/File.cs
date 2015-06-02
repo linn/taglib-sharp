@@ -165,8 +165,18 @@ namespace TagLib.Aiff
 			{
 				uint aiff_size;
 				long tag_start, tag_end;
-				Read(true, propertiesStyle, out aiff_size,
-				     out tag_start, out tag_end);
+                try
+                {
+                    // try to parse efficiently
+                    Read(true, propertiesStyle, out aiff_size,
+                         out tag_start, out tag_end, true);
+                }
+                catch (AiffDataChunkError)
+                {
+                    // fallback to brute force search
+                    Read(true, propertiesStyle, out aiff_size,
+                         out tag_start, out tag_end, false);
+                }
 			}
 			finally
 			{
@@ -263,8 +273,18 @@ namespace TagLib.Aiff
 				// size and the area tagging is in.
 				uint aiff_size;
 				long tag_start, tag_end;
-				Read(false, ReadStyle.None, out aiff_size,
-				     out tag_start, out tag_end);
+                try
+                {
+                    // try to parse efficiently
+                    Read(false, ReadStyle.None, out aiff_size,
+                     out tag_start, out tag_end, true);
+                }
+                catch (AiffDataChunkError)
+                {
+                    // fallback to brute force search
+                    Read(false, ReadStyle.None, out aiff_size,
+                         out tag_start, out tag_end, false);
+                }
 
 				// If tagging info cannot be found, place it at
 				// the end of the file.
@@ -399,7 +419,7 @@ namespace TagLib.Aiff
 		/// </exception>
 		private void Read(bool read_tags, ReadStyle style,
 		                  out uint aiff_size, out long tag_start,
-		                  out long tag_end)
+		                  out long tag_end, bool useChunks)
 		{
 			Seek(0);
 			if (ReadBlock(4) != FileIdentifier)
@@ -410,13 +430,21 @@ namespace TagLib.Aiff
 			tag_start = -1;
 			tag_end = -1;
 
-            AiffDataChunks chunks = new AiffDataChunks(this);
+            AiffDataChunks chunks = null;
+            if (useChunks)
+            {
+                chunks = new AiffDataChunks(this);
+            }
 
 			// Get the properties of the file
 			if (header_block == null &&
 			    style != ReadStyle.None)
 			{
-                long common_chunk_pos = chunks.Find(CommIdentifier, 0);
+                long common_chunk_pos;
+                if (useChunks)
+                    common_chunk_pos = chunks.Find(CommIdentifier, 0);
+                else
+                    common_chunk_pos = Find(CommIdentifier, 0);
 
 				if (common_chunk_pos == -1)
 				{
@@ -437,17 +465,39 @@ namespace TagLib.Aiff
 			// the sound data chunk.
 			// So we search first for the Sound data chunk and see, if an ID3 chunk appears before
 			long id3_chunk_pos = -1;
-            long sound_chunk_pos = chunks.Find(SoundIdentifier, 0, ID3Identifier);
+            long sound_chunk_pos;
+            if (useChunks)
+            {
+                sound_chunk_pos = chunks.Find(SoundIdentifier, 0, ID3Identifier);
+            }
+            else
+            {
+                sound_chunk_pos = Find(SoundIdentifier, 0, ID3Identifier);
+            }
 			if (sound_chunk_pos == -1)
-			{
-				// The ID3 chunk appears before the Sound chunk
-                id3_chunk_pos = chunks.Find(ID3Identifier, 0);
+            {
+                // The ID3 chunk appears before the Sound chunk
+                if (useChunks)
+                {
+                    id3_chunk_pos = chunks.Find(ID3Identifier, 0);
+                }
+                else
+                {
+                    id3_chunk_pos = Find(ID3Identifier, 0);
+                }
             }
 
 
 			// Now let's look for the Sound chunk again
 			// Since a previous return value of -1 does mean, that the ID3 chunk was found first
-            sound_chunk_pos = chunks.Find(SoundIdentifier, 0);
+            if (useChunks)
+            {
+                sound_chunk_pos = chunks.Find(SoundIdentifier, 0);
+            }
+            else
+            {
+                sound_chunk_pos = Find(SoundIdentifier, 0);
+            }
 			if (sound_chunk_pos == -1)
 			{
 				throw new CorruptFileException(
@@ -461,7 +511,14 @@ namespace TagLib.Aiff
 
 			if (id3_chunk_pos == -1)
 			{
-                id3_chunk_pos = chunks.Find(ID3Identifier, start_search_pos);
+                if (useChunks)
+                {
+                    id3_chunk_pos = chunks.Find(ID3Identifier, start_search_pos);
+                }
+                else
+                {
+                    id3_chunk_pos = Find(ID3Identifier, start_search_pos);
+                }
 			}
 
 			if (id3_chunk_pos > -1)

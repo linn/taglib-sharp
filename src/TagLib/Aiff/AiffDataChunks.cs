@@ -5,6 +5,13 @@ using System.Text;
 
 namespace TagLib.Aiff
 {
+    class AiffDataChunkError : Exception
+    {
+        public AiffDataChunkError(string aMessage)
+            : base(aMessage)
+        { }
+    }
+
     class AiffDataChunks
     {
         private List<AiffDataChunk> iChunks;
@@ -12,6 +19,7 @@ namespace TagLib.Aiff
         public AiffDataChunks(File aFile)
         {
             iChunks = new List<AiffDataChunk>();
+
 
             var firstChunkLength = 12;
             var chunkHeaderSize = 8;
@@ -28,7 +36,7 @@ namespace TagLib.Aiff
             iChunks.Add(initialChunk);
             long currentIndex = firstChunkLength; // length of initial data chunk
 
-            while (currentIndex < fileLength + firstChunkLength)
+            while (currentIndex < fileLength + chunkHeaderSize)
             {
                 var chunk = new AiffDataChunk();
                 aFile.Seek(currentIndex);
@@ -36,7 +44,12 @@ namespace TagLib.Aiff
                 chunk.Pattern = aFile.ReadBlock(4);
                 aFile.Seek(currentIndex + 4);
                 var lengthBlock = aFile.ReadBlock(4);
-                chunk.Length = (long)lengthBlock.ToULong(true);
+                var length = (long)lengthBlock.ToULong(true);
+                if (length % 2 == 1)
+                {
+                    length += 1; // aiff pads odd length blocks
+                }
+                chunk.Length = length;
                 iChunks.Add(chunk);
                 currentIndex += chunk.Length + chunkHeaderSize;
             }
@@ -85,9 +98,66 @@ namespace TagLib.Aiff
 
         private class AiffDataChunk
         {
-            public long Offset;
-            public long Length;
-            public ByteVector Pattern;
+            private ByteVector iPattern;
+            private long iLength;
+            private long iOffset;
+
+            public long Offset
+            {
+                get
+                {
+                    return iOffset;
+                }
+                set
+                {
+                    if (value < 0)
+                    {
+                        throw new AiffDataChunkError(string.Format("Invalid chunk offset: {0}", value));
+                    }
+                    iOffset = value;
+                }
+            }
+
+            public long Length
+            {
+                get
+                {
+                    return iLength;
+                }
+                set
+                {
+                    if (value <= 0 || value % 2 != 0)
+                    {
+                        throw new AiffDataChunkError(string.Format("Invalid chunk length: {0}", value));
+                    }
+                    iLength = value;
+                }
+            }
+
+            public ByteVector Pattern
+            {
+                get
+                {
+                    return iPattern;
+                }
+                set
+                {
+                    if (!IsValidPattern(value))
+                    {
+                        throw new AiffDataChunkError(string.Format("Invalid chunk header: {0}", value.ToString()));
+                    }
+                    iPattern = value;
+                }
+            }
+
+            private bool IsValidPattern(ByteVector aPattern)
+            {
+                var validPatterns = new List<string>()
+                {
+                    "FORM", "COMM", "INST", "MARK", "SKIP", "SSND", "NAME", "FVER", "MIDI", "AESD", "APPL", "COMT", "AUTH", "(c) ", "ANNO", "ID3 "
+                };
+                return (validPatterns.Contains(aPattern.ToString()));
+            }
         }
     }
 }
