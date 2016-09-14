@@ -126,7 +126,7 @@ namespace TagLib.Aiff
                 }
                 set
                 {
-                    if (value <= 0 || value % 2 != 0)
+                    if (value <= 0)
                     {
                         throw new AiffDataChunkError(string.Format("Invalid chunk length: {0}", value));
                     }
