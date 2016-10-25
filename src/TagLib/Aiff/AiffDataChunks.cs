@@ -154,7 +154,7 @@ namespace TagLib.Aiff
             {
                 var validPatterns = new List<string>()
                 {
-                    "FORM", "COMM", "INST", "MARK", "SKIP", "SSND", "NAME", "FVER", "MIDI", "AESD", "APPL", "COMT", "AUTH", "(c) ", "ANNO", "ID3 "
+                    "FORM", "COMM", "INST", "MARK", "SKIP", "SSND", "NAME", "FVER", "MIDI", "AESD", "APPL", "COMT", "AUTH", "(c) ", "ANNO", "ID3 ", "FLLR"
                 };
                 return (validPatterns.Contains(aPattern.ToString()));
             }
