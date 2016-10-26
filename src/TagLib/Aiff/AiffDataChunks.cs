@@ -142,21 +142,8 @@ namespace TagLib.Aiff
                 }
                 set
                 {
-                    if (!IsValidPattern(value))
-                    {
-                        throw new AiffDataChunkError(string.Format("Invalid chunk header: {0}", value.ToString()));
-                    }
                     iPattern = value;
                 }
-            }
-
-            private bool IsValidPattern(ByteVector aPattern)
-            {
-                var validPatterns = new List<string>()
-                {
-                    "FORM", "COMM", "INST", "MARK", "SKIP", "SSND", "NAME", "FVER", "MIDI", "AESD", "APPL", "COMT", "AUTH", "(c) ", "ANNO", "ID3 ", "FLLR"
-                };
-                return (validPatterns.Contains(aPattern.ToString()));
             }
         }
     }
