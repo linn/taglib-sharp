@@ -1,25 +1,6 @@
 //
-// File.cs: Provides tagging and properties support for Apple's AIFF 
+// File.cs: Provides tagging and properties support for DSF 
 // files.
-//
-// Author:
-//   Helmut Wahrmann
-//
-// Copyright (C) 2009 Helmut Wahrmann
-//
-// This library is free software; you can redistribute it and/or modify
-// it  under the terms of the GNU Lesser General Public License version
-// 2.1 as published by the Free Software Foundation.
-//
-// This library is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License along with this library; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
-// USA
 //
 
 using System;
@@ -42,11 +23,6 @@ namespace TagLib.Dsf
     public class File : TagLib.File
     {
         #region Private Fields
-
-        /// <summary>
-        ///    Contains the address of the DSF header block.
-        /// </summary>
-        private ByteVector header_block = null;
 
         /// <summary>
         ///  Contains the Id3v2 tag.
