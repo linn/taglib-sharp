@@ -32,7 +32,7 @@ class Builder(OpenHomeBuilder):
 
     def build(self):
         if self.platform == 'Windows-x86':
-            self.msbuild('taglib-sharp.sln', target='Build', configuration=self.configuration, platform="Any CPU")
+            self.msbuild('taglib-sharp.sln', target='Build', configuration=self.configuration, platform="'Any CPU'")
             if not os.path.isdir(self.output_dir):
                 os.makedirs(self.output_dir)
             self.pack_nuget('src/taglib-sharp.nuspec', '.')
