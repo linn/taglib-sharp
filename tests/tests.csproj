@@ -71,6 +71,7 @@
     <Compile Include="fixtures\TagLib.Tests.FileFormats\AiffFormatTest.cs" />
     <Compile Include="fixtures\TagLib.Tests.FileFormats\AsfFormatTest.cs" />
     <Compile Include="fixtures\TagLib.Tests.FileFormats\AviFormatTest.cs" />
+    <Compile Include="fixtures\TagLib.Tests.FileFormats\DsfFormatTest.cs" />
     <Compile Include="fixtures\TagLib.Tests.FileFormats\FlacFormatTest.cs" />
     <Compile Include="fixtures\TagLib.Tests.FileFormats\Id3BothFormatTest.cs" />
     <Compile Include="fixtures\TagLib.Tests.FileFormats\Id3V1FormatTest.cs" />

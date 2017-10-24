@@ -82,7 +82,8 @@ namespace TagLib {
 			typeof(TagLib.Tiff.Nef.File),
 			typeof(TagLib.Tiff.Pef.File),
 			typeof(TagLib.Tiff.Rw2.File),
-			typeof(TagLib.WavPack.File)
+			typeof(TagLib.WavPack.File),
+            typeof(TagLib.Dsf.File)
 		};
 		
 		/// <summary>

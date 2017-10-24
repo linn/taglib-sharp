@@ -16,7 +16,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>True</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>..\build\taglib-sharp\$(Configuration)\bin</OutputPath>
     <IntermediateOutputPath>..\build\taglib-sharp\$(Configuration)\obj</IntermediateOutputPath>
     <ErrorReport>prompt</ErrorReport>
@@ -51,6 +51,7 @@
     <Compile Include="TagLib\CombinedTag.cs" />
     <Compile Include="TagLib\CorruptFileException.cs" />
     <Compile Include="TagLib\Debugger.cs" />
+    <Compile Include="TagLib\Dsf\File.cs" />
     <Compile Include="TagLib\File.cs" />
     <Compile Include="TagLib\FileTypes.cs" />
     <Compile Include="TagLib\Genres.cs" />
